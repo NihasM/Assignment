@@ -14,6 +14,4 @@ interface UserDao {
     @Query("SELECT * FROM users_table")
     suspend fun getAllUsers(): List<Users>
 
-    @Query("SELECT COUNT(*) FROM your_table_name")
-    fun getRowCount(): Int
 }

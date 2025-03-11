@@ -71,14 +71,13 @@ class MainActivity : ActivityBase() {
 
                 }
                 is ResponseHandler.OnSuccessResponse -> {
-                    Log.d("kool", "attachObservables: "+viewModel?.dbData)
-                    if(viewModel?.dbData == 0){
+
                         response.response.forEach {
                             lifecycleScope.launch {
                                 viewModel?.insertUsersData(Users(username = it.actName?: "", userId = it.actid?:""))
                             }
                         }
-                    }
+
 
                 }
                 else -> {

@@ -12,14 +12,14 @@ import com.noble.assignment.network.RetrofitInstance
 import com.noble.assignment.room.MyApp
 import com.noble.assignment.room.Users
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class MainViewModel : ViewModel() {
     private var apiInterface: ApiInterface? = null
     val userListResponse = MutableLiveData<ResponseHandler<Array<UserListResponse.Data>>>()
-    var dbData = MyApp.database.userDao().getRowCount()
-
+    var userList = MutableLiveData<List<Users>>()
 
 
     fun initRetrofit(context: Context) {
@@ -31,6 +31,11 @@ class MainViewModel : ViewModel() {
             MyApp.database.userDao().insertUser(users)
     }
 
+    suspend fun getUserDBData(){
+        delay(1000)
+        val usersList = MyApp.database.userDao().getAllUsers()
+        userList.postValue(usersList)
+    }
 
     fun getUserData(){
         viewModelScope.launch {
