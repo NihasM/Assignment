@@ -9,6 +9,8 @@ import com.google.gson.Gson
 import com.noble.assignment.network.ApiInterface
 import com.noble.assignment.network.ResponseHandler
 import com.noble.assignment.network.RetrofitInstance
+import com.noble.assignment.room.MyApp
+import com.noble.assignment.room.Users
 import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
@@ -20,9 +22,12 @@ class MainViewModel : ViewModel() {
     fun initRetrofit(context: Context) {
         RetrofitInstance.initRetrofit(context)
         apiInterface = RetrofitInstance.getApiInterface()
-
-
     }
+
+    suspend fun insertUsersData(users: Users) {
+        return MyApp.database.userDao().insertUser(users)
+    }
+
     fun getUserData(){
         viewModelScope.launch {
             userListResponse.value = ResponseHandler.Loading
