@@ -8,11 +8,14 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.navigation.NavigationView
 import com.noble.assignment.databinding.ActivityMainBinding
 import com.noble.assignment.network.ResponseHandler
+import com.noble.assignment.room.Users
+import kotlinx.coroutines.launch
 
 class MainActivity : ActivityBase() {
     private var viewModel: MainViewModel? = null
@@ -22,7 +25,6 @@ class MainActivity : ActivityBase() {
 
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-
         viewModel?.initRetrofit(this)
         viewModel?.getUserData()
         attachObservables()
@@ -69,9 +71,14 @@ class MainActivity : ActivityBase() {
 
                 }
                 is ResponseHandler.OnSuccessResponse -> {
-                   response.response.forEach {
-                       Log.d("kool", "actName: "+it.actName)
-                   }
+                    Log.d("kool", "attachObservables: "+viewModel?.dbData)
+                    if(viewModel?.dbData == 0){
+                        response.response.forEach {
+                            lifecycleScope.launch {
+                                viewModel?.insertUsersData(Users(username = it.actName?: "", userId = it.actid?:""))
+                            }
+                        }
+                    }
 
                 }
                 else -> {

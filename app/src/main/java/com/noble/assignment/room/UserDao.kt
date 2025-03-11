@@ -11,6 +11,9 @@ interface UserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertUser(user: Users)
 
-    @Query("SELECT * FROM users")
+    @Query("SELECT * FROM users_table")
     suspend fun getAllUsers(): List<Users>
+
+    @Query("SELECT COUNT(*) FROM your_table_name")
+    fun getRowCount(): Int
 }

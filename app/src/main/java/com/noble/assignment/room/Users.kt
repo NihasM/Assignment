@@ -8,5 +8,5 @@ data class Users(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val username: String,
     val userId: String,
-    val alternateName: String
+    val alternateName: String = ""
     )

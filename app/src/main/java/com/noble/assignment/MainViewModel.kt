@@ -11,11 +11,14 @@ import com.noble.assignment.network.ResponseHandler
 import com.noble.assignment.network.RetrofitInstance
 import com.noble.assignment.room.MyApp
 import com.noble.assignment.room.Users
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainViewModel : ViewModel() {
     private var apiInterface: ApiInterface? = null
     val userListResponse = MutableLiveData<ResponseHandler<Array<UserListResponse.Data>>>()
+    var dbData = MyApp.database.userDao().getRowCount()
 
 
 
@@ -25,8 +28,9 @@ class MainViewModel : ViewModel() {
     }
 
     suspend fun insertUsersData(users: Users) {
-        return MyApp.database.userDao().insertUser(users)
+            MyApp.database.userDao().insertUser(users)
     }
+
 
     fun getUserData(){
         viewModelScope.launch {
