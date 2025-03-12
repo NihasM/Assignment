@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.navigation.NavigationView
+import com.noble.assignment.HomeScreen.SharedPreferencesUtils
 import com.noble.assignment.databinding.ActivityMainBinding
 import com.noble.assignment.network.ResponseHandler
 import com.noble.assignment.room.Users
@@ -22,6 +23,7 @@ import kotlinx.coroutines.launch
 class MainActivity : ActivityBase() {
     private var viewModel: MainViewModel? = null
     private var binding: ActivityMainBinding? = null
+    private var isApiCalled = SharedPreferencesUtils.getBoolean(this, "isLoggedIn", false)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -30,12 +32,7 @@ class MainActivity : ActivityBase() {
         viewModel?.initRetrofit(this)
 
 
-        lifecycleScope.launch {
-            viewModel?.getUserDBData()
-        }
-
-
-
+        callApi()
 
         attachObservables()
         setNavigationHostFragment(supportFragmentManager.findFragmentById(R.id.splash_host) as NavHostFragment)
@@ -72,6 +69,10 @@ class MainActivity : ActivityBase() {
         }
     }
 
+    fun callApi(){
+        viewModel?.getUserData()
+    }
+
     private fun attachObservables() {
         viewModel?.userListResponse?.observe(this) { response ->
             when (response) {
@@ -82,11 +83,19 @@ class MainActivity : ActivityBase() {
                 }
                 is ResponseHandler.OnSuccessResponse -> {
 
-                        response.response.forEach {
-                            lifecycleScope.launch {
+                    if(!isApiCalled){
+                        lifecycleScope.launch {
+                            viewModel?.deleteData()
+
+                            response.response.forEach {
+
                                 viewModel?.insertUsersData(Users(username = it.actName?: "", userId = it.actid?:""))
                             }
                         }
+
+                        SharedPreferencesUtils.putBoolean(this, "isApiCalled", true)
+                    }
+
 
 
                 }
@@ -97,11 +106,5 @@ class MainActivity : ActivityBase() {
 
         }
 
-        viewModel?.userList?.observe(this, Observer { users ->
-            Log.d("kool", "attachObservables: "+users.size)
-            if (users.isEmpty()) {
-                viewModel?.getUserData()
-            }
-        })
     }
 }

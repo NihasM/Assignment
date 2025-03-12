@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 
 @Dao
 interface UserDao {
@@ -14,7 +15,10 @@ interface UserDao {
     @Query("SELECT * FROM users_table")
     suspend fun getAllUsers(): List<Users>
 
-    @Query("SELECT COUNT(*) FROM users_table")
-    fun countItems(): Int
+    @Query("DELETE FROM users_table")
+    suspend fun deleteAllItems()
+
+    @Update
+    suspend fun updateUser(user: Users)
 
 }

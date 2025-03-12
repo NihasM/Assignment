@@ -33,10 +33,18 @@ class MainViewModel : ViewModel() {
 
     suspend fun getUserDBData(){
         delay(1000)
+        userList.postValue(emptyList())
         val usersList = MyApp.database.userDao().getAllUsers()
         userList.postValue(usersList)
     }
 
+    suspend fun deleteData(){
+        MyApp.database.userDao().deleteAllItems()
+    }
+
+    suspend fun updateUser(users: Users){
+        MyApp.database.userDao().updateUser(users)
+    }
     fun getUserData(){
         viewModelScope.launch {
             userListResponse.value = ResponseHandler.Loading
@@ -58,5 +66,9 @@ class MainViewModel : ViewModel() {
                 userListResponse.value = ResponseHandler.OnFailed(-1, e.message, "")
             }
         }
+    }
+
+    fun isUserListEmpty(): Boolean {
+        return userList.value.isNullOrEmpty()
     }
 }
