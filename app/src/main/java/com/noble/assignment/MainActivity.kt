@@ -7,6 +7,7 @@ import android.widget.Toolbar
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavOptions
@@ -15,6 +16,7 @@ import com.google.android.material.navigation.NavigationView
 import com.noble.assignment.databinding.ActivityMainBinding
 import com.noble.assignment.network.ResponseHandler
 import com.noble.assignment.room.Users
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class MainActivity : ActivityBase() {
@@ -26,7 +28,15 @@ class MainActivity : ActivityBase() {
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         viewModel?.initRetrofit(this)
-        viewModel?.getUserData()
+
+
+        lifecycleScope.launch {
+            viewModel?.getUserDBData()
+        }
+
+
+
+
         attachObservables()
         setNavigationHostFragment(supportFragmentManager.findFragmentById(R.id.splash_host) as NavHostFragment)
         setSupportActionBar(binding?.toolbar)
@@ -86,5 +96,12 @@ class MainActivity : ActivityBase() {
             }
 
         }
+
+        viewModel?.userList?.observe(this, Observer { users ->
+            Log.d("kool", "attachObservables: "+users.size)
+            if (users.isEmpty()) {
+                viewModel?.getUserData()
+            }
+        })
     }
 }

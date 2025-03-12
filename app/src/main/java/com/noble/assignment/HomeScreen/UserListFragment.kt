@@ -10,6 +10,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.noble.assignment.HomeScreen.adapter.UserListingAdapter
 import com.noble.assignment.MainViewModel
 import com.noble.assignment.R
 import com.noble.assignment.databinding.FragmentUserListBinding
@@ -22,6 +24,7 @@ import kotlinx.coroutines.launch
 class UserListFragment : Fragment() {
     private var viewModel: MainViewModel? = null
     private var binding: FragmentUserListBinding? = null
+    private var userListingAdapter: UserListingAdapter? = null
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -35,14 +38,17 @@ class UserListFragment : Fragment() {
         lifecycleScope.launch {
             viewModel?.getUserDBData()
         }
-
+        userListingAdapter = UserListingAdapter()
+        binding?.userListRcy?.adapter = userListingAdapter
+        binding?.userListRcy?.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         observeUserList()
         return binding?.root
     }
 
     private fun observeUserList() {
         viewModel?.userList?.observe(viewLifecycleOwner, Observer { users ->
-            Log.d("kool", "observeUserList: "+users)
+            userListingAdapter?.setUserData(users)
         })
     }
 

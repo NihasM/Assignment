@@ -20,7 +20,7 @@ class MainViewModel : ViewModel() {
     private var apiInterface: ApiInterface? = null
     val userListResponse = MutableLiveData<ResponseHandler<Array<UserListResponse.Data>>>()
     var userList = MutableLiveData<List<Users>>()
-
+    val dbCount = MutableLiveData<Int>()
 
     fun initRetrofit(context: Context) {
         RetrofitInstance.initRetrofit(context)
