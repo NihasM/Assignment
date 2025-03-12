@@ -51,4 +51,9 @@ class UserListingAdapter:RecyclerView.Adapter<UserListingAdapter.UserListingView
         notifyItemRangeInserted(0, userList.size)
     }
 
+    fun removeItem(position: Int) {
+        userList.removeAt(position)
+        notifyItemRemoved(position)
+    }
+
 }

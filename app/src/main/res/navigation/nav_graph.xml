@@ -17,4 +17,10 @@
         android:name="com.noble.assignment.imageCapture.ImageCaptureFragment"
         android:label="fragment_image_capture"
         tools:layout="@layout/fragment_image_capture" />
+
+
+    <fragment
+        android:id="@+id/pdfViewerFragment"
+        android:name="com.noble.assignment.pdf.PdfViewerFragment"
+        android:label="PdfViewerFragment" />
 </navigation>

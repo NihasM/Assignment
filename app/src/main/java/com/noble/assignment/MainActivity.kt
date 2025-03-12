@@ -23,14 +23,15 @@ import kotlinx.coroutines.launch
 class MainActivity : ActivityBase() {
     private var viewModel: MainViewModel? = null
     private var binding: ActivityMainBinding? = null
-    private var isApiCalled = SharedPreferencesUtils.getBoolean(this, "isLoggedIn", false)
+    private var isApiCalled: Boolean = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         viewModel?.initRetrofit(this)
-
+        isApiCalled = SharedPreferencesUtils.getBoolean(this, "isApiCalled", false)
+        Log.d("kool", "onCreate:00 "+SharedPreferencesUtils.getBoolean(this, "isApiCalled", false))
 
         callApi()
 
@@ -61,7 +62,8 @@ class MainActivity : ActivityBase() {
                     true
                 }
                 R.id.nav_logout -> {
-
+                    navHostFragment.navController.navigate(R.id.pdfViewerFragment)
+                    binding?.drawerLayout?.closeDrawers()
                     true
                 }
                 else -> false
