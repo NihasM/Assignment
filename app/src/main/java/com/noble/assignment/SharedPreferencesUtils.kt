@@ -1,4 +1,4 @@
-package com.noble.assignment.HomeScreen
+package com.noble.assignment
 
 import android.content.Context
 import android.content.SharedPreferences

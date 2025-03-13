@@ -45,6 +45,10 @@ class MainViewModel : ViewModel() {
     suspend fun updateUser(users: Users){
         MyApp.database.userDao().updateUser(users)
     }
+
+    suspend fun deleteUser(userId:Long){
+        MyApp.database.userDao().deleteUserById(userId)
+    }
     fun getUserData(){
         viewModelScope.launch {
             userListResponse.value = ResponseHandler.Loading

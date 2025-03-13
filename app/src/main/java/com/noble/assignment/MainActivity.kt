@@ -3,6 +3,7 @@ package com.noble.assignment
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toolbar
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.databinding.DataBindingUtil
@@ -13,7 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.navigation.NavigationView
-import com.noble.assignment.HomeScreen.SharedPreferencesUtils
+import com.noble.assignment.SharedPreferencesUtils
 import com.noble.assignment.databinding.ActivityMainBinding
 import com.noble.assignment.network.ResponseHandler
 import com.noble.assignment.room.Users
@@ -24,6 +25,7 @@ class MainActivity : ActivityBase() {
     private var viewModel: MainViewModel? = null
     private var binding: ActivityMainBinding? = null
     private var isApiCalled: Boolean = false
+    private var reloadClickListner: ReloadClickListner? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -31,7 +33,7 @@ class MainActivity : ActivityBase() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         viewModel?.initRetrofit(this)
         isApiCalled = SharedPreferencesUtils.getBoolean(this, "isApiCalled", false)
-        Log.d("kool", "onCreate:00 "+SharedPreferencesUtils.getBoolean(this, "isApiCalled", false))
+        Log.d("kool", "onCreate:00 "+ SharedPreferencesUtils.getBoolean(this, "isApiCalled", false))
 
         callApi()
 
@@ -40,6 +42,12 @@ class MainActivity : ActivityBase() {
         setSupportActionBar(binding?.toolbar)
         setupDrawer()
         binding?.toolbar?.setNavigationIcon(R.drawable.ic_menu_new)
+
+        binding?.imgReload?.setOnClickListener {
+            binding?.imgReload?.animate()?.rotation(360f)?.start()
+            isApiCalled = false
+            callApi()
+        }
     }
 
     private fun setupDrawer() {
@@ -79,9 +87,9 @@ class MainActivity : ActivityBase() {
         viewModel?.userListResponse?.observe(this) { response ->
             when (response) {
                 is ResponseHandler.Loading -> {
-
+                    showProgressBar(true)
                 }is ResponseHandler.OnFailed -> {
-
+                showProgressBar(false)
                 }
                 is ResponseHandler.OnSuccessResponse -> {
 
@@ -94,8 +102,8 @@ class MainActivity : ActivityBase() {
                                 viewModel?.insertUsersData(Users(username = it.actName?: "", userId = it.actid?:""))
                             }
                         }
-
                         SharedPreferencesUtils.putBoolean(this, "isApiCalled", true)
+                        reloadClickListner?.onReloadClick()
                     }
 
 
@@ -108,5 +116,26 @@ class MainActivity : ActivityBase() {
 
         }
 
+    }
+
+    fun setTitle(title:String,reload:Boolean = false){
+        binding?.tvTitle?.text = title
+        if(reload){
+            binding?.imgReload?.visibility = View.VISIBLE
+        }else{
+            binding?.imgReload?.visibility = View.GONE
+        }
+    }
+
+    fun showProgressBar(progressLoader:Boolean){
+        if(progressLoader){
+            binding?.progressLoader?.root?.visibility = View.VISIBLE
+        }else{
+            binding?.progressLoader?.root?.visibility = View.GONE
+        }
+    }
+
+    fun setPopupCallback(callback: ReloadClickListner) {
+        reloadClickListner = callback
     }
 }

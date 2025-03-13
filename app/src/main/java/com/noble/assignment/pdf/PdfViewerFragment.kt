@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import com.noble.assignment.MainActivity
 import com.noble.assignment.R
 import com.noble.assignment.databinding.FragmentPdfViewerBinding
 import com.noble.assignment.databinding.FragmentUserListBinding
@@ -20,7 +21,7 @@ class PdfViewerFragment : Fragment() {
         binding = DataBindingUtil.inflate(
             inflater, R.layout.fragment_pdf_viewer, container, false
         )
-
+        (activity as MainActivity).setTitle("Pdf Viewer")
         binding?.pdfViewer?.fromAsset("BalanceSheet.pdf")
             ?.enableSwipe(true)
             ?.swipeHorizontal(false)
