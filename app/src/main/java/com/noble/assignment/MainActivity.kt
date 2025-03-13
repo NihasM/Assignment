@@ -25,6 +25,7 @@ class MainActivity : ActivityBase() {
     private var viewModel: MainViewModel? = null
     private var binding: ActivityMainBinding? = null
     private var isApiCalled: Boolean = false
+    private var loadprogress: Boolean = false
     private var reloadClickListner: ReloadClickListner? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +47,7 @@ class MainActivity : ActivityBase() {
         binding?.imgReload?.setOnClickListener {
             binding?.imgReload?.animate()?.rotation(360f)?.start()
             isApiCalled = false
+            loadprogress = true
             callApi()
         }
     }
@@ -87,7 +89,10 @@ class MainActivity : ActivityBase() {
         viewModel?.userListResponse?.observe(this) { response ->
             when (response) {
                 is ResponseHandler.Loading -> {
-                    showProgressBar(true)
+                    if(loadprogress){
+                        showProgressBar(true)
+                    }
+
                 }is ResponseHandler.OnFailed -> {
                 showProgressBar(false)
                 }
@@ -118,12 +123,21 @@ class MainActivity : ActivityBase() {
 
     }
 
-    fun setTitle(title:String,reload:Boolean = false){
+
+    fun setTitle(title:String,reload:Boolean = false,toolbar:Boolean = true){
         binding?.tvTitle?.text = title
         if(reload){
             binding?.imgReload?.visibility = View.VISIBLE
         }else{
             binding?.imgReload?.visibility = View.GONE
+        }
+
+        if(toolbar){
+            binding?.toolbar?.visibility = View.VISIBLE
+            binding?.tvTitle?.visibility = View.VISIBLE
+        }else{
+            binding?.toolbar?.visibility = View.GONE
+            binding?.tvTitle?.visibility = View.GONE
         }
     }
 
@@ -138,4 +152,7 @@ class MainActivity : ActivityBase() {
     fun setPopupCallback(callback: ReloadClickListner) {
         reloadClickListner = callback
     }
+
+
+
 }

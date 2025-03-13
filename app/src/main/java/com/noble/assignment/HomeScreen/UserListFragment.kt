@@ -236,4 +236,10 @@ class UserListFragment : Fragment(),itemClickListener, ReloadClickListner {
         }
     }
 
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        editDialog?.dismiss()
+    }
+
 }
